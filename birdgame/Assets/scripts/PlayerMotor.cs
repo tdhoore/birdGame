@@ -12,13 +12,18 @@ public class PlayerMotor : MonoBehaviour {
 
     [SerializeField]
     private Camera cam;
-
     private GameObject bird;
 
     [SerializeField]
     private float maxRotY = 45;
+    [SerializeField]
     private float maxRotX = 30;
+    [SerializeField]
     private float maxRotZ = 10;
+
+    [SerializeField]
+    private float speedMultiplier = 1;
+    private float speedMultiplierVal = 1;
 
     void Start() {
         rb = GetComponent<Rigidbody>();
@@ -45,8 +50,13 @@ public class PlayerMotor : MonoBehaviour {
 
     private void PerformMovement() {
         if (velocity != Vector3.zero) {
-            rb.velocity = velocity * Time.fixedDeltaTime;
+            rb.velocity = velocity * Time.fixedDeltaTime * speedMultiplierVal;
         }
+    }
+
+
+    private float Remap(float value, float from1, float to1, float from2, float to2) {
+        return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
     }
 
     private void PerformRotation() {
@@ -70,33 +80,38 @@ public class PlayerMotor : MonoBehaviour {
         //rotate bird
         //if turning then rotate bird
         float currentRotZ = bird.transform.rotation.eulerAngles.z;
-        float currentY = rb.rotation.eulerAngles.y;
-        float clampZ = -rotation.y;
 
-        if (currentRotZ + rotation.y > maxRotZ && currentRotZ + rotation.y < 360 - maxRotZ) {
+        if (currentRotZ - rotation.y > maxRotZ && currentRotZ - rotation.y < 360 - maxRotZ) {
             if (currentRotZ + rotation.y < 180) {
-                clampZ -= (currentRotZ + rotation.y) - maxRotZ;
+                bird.transform.Rotate(0, 0, maxRotZ - currentRotZ);
+            } else {
+                bird.transform.Rotate(0, 0, (360 - maxRotZ) - currentRotZ);
             }
-            else {
-                clampZ -= (currentRotZ + rotation.y) - (360 - maxRotZ);
-            }
+        } else {
+            bird.transform.Rotate(0, 0, -rotation.y);
         }
-
-        bird.transform.Rotate(0, 0, clampZ);
 
 
         //set cam rotation
         float currentRotX = cam.transform.rotation.eulerAngles.x;
-
+   
         if (currentRotX + rotationCam.x > maxRotX && currentRotX + rotationCam.x < 360 - maxRotX) {
             //is going to far
             if (currentRotX + rotationCam.x < 180) {
-                cam.transform.rotation = Quaternion.Euler(maxRotX, 0, 0);
+                cam.transform.Rotate(maxRotX - currentRotX, 0, 0);
+
             } else {
-                cam.transform.rotation = Quaternion.Euler(360 - maxRotX, 0, 0);
+                cam.transform.Rotate((360 - maxRotX) - currentRotX, 0, 0);
             }
         } else {
             cam.transform.Rotate(rotationCam.x, 0, 0);
+        }
+
+        //set speed multiplyer by angle
+        if (currentRotX < 180) {
+            speedMultiplierVal = Remap(currentRotX, 0, maxRotX, 1, 1 + speedMultiplier);
+        } else {
+            speedMultiplierVal = Remap((360 - currentRotX), 0, maxRotX, 1, 1 + speedMultiplier);
         }
     }
 }
