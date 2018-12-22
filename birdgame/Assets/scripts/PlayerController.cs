@@ -17,14 +17,8 @@ public class PlayerController : MonoBehaviour {
     }
 
     void Update() {
-        //calc movemenent
-        Vector3 moveVertical = transform.forward;
-
-        //final movement
-        Vector3 velocity = transform.forward.normalized * speed;
-
         //apply movement
-        motor.Move(velocity);
+        motor.Move(speed);
 
         //rotation
         float _yRot = Input.GetAxisRaw("Mouse X");

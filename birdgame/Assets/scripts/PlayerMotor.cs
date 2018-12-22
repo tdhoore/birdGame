@@ -13,16 +13,21 @@ public class PlayerMotor : MonoBehaviour {
     [SerializeField]
     private Camera cam;
 
+    private GameObject bird;
+
     [SerializeField]
     private float maxRotY = 45;
     private float maxRotX = 30;
+    private float maxRotZ = 10;
 
     void Start() {
         rb = GetComponent<Rigidbody>();
+
+        bird = cam.transform.Find("bird").gameObject;
     }
 
-    public void Move(Vector3 inputV) {
-        velocity = inputV;
+    public void Move(float speed) {
+        velocity = cam.transform.forward * speed;
     }
 
     public void Rotate(Vector3 _rotation) {
@@ -40,7 +45,7 @@ public class PlayerMotor : MonoBehaviour {
 
     private void PerformMovement() {
         if (velocity != Vector3.zero) {
-            rb.MovePosition(rb.position + velocity * Time.fixedDeltaTime);
+            rb.velocity = velocity * Time.fixedDeltaTime;
         }
     }
 
@@ -61,6 +66,24 @@ public class PlayerMotor : MonoBehaviour {
         newRot = Quaternion.Euler(0, clampedY, 0);
 
         rb.MoveRotation(newRot);
+
+        //rotate bird
+        //if turning then rotate bird
+        float currentRotZ = bird.transform.rotation.eulerAngles.z;
+        float currentY = rb.rotation.eulerAngles.y;
+        float clampZ = -rotation.y;
+
+        if (currentRotZ + rotation.y > maxRotZ && currentRotZ + rotation.y < 360 - maxRotZ) {
+            if (currentRotZ + rotation.y < 180) {
+                clampZ -= (currentRotZ + rotation.y) - maxRotZ;
+            }
+            else {
+                clampZ -= (currentRotZ + rotation.y) - (360 - maxRotZ);
+            }
+        }
+
+        bird.transform.Rotate(0, 0, clampZ);
+
 
         //set cam rotation
         float currentRotX = cam.transform.rotation.eulerAngles.x;
