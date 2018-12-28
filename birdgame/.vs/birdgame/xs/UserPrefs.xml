@@ -1,8 +1,7 @@
 ﻿<Properties StartupConfiguration="{F6DF5013-8F9E-F2F8-E51E-C2F2431E41A1}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/PlayerMotor.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/TerrainGenerator.cs">
     <Files>
-      <File FileName="Assets/scripts/PlayerController.cs" Line="40" Column="1" />
-      <File FileName="Assets/scripts/PlayerMotor.cs" Line="37" Column="27" />
+      <File FileName="Assets/scripts/TerrainGenerator.cs" Line="38" Column="79" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
